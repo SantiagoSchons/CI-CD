@@ -1,20 +1,21 @@
-name: Continuos Integration
+name: 'deploy'
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - deply
 
 jobs:
-  continuos-integration:
-    runs-on: ubuntu-latest
-
+  deploy:
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - name: Using Node.js
-        uses: actions/setup-node@v2
+      - name: Cloning repo
+        uses: actions/checkout@v3
         with:
-          node-version: 20.
-      - name: run install, build
-        run: | 
-          npm install
-          npm run build
+          fetch-depth: 0
+
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@192.168.0.113:vue'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
